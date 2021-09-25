@@ -23,13 +23,17 @@ app.use(
     origin: "*",
   })
 );
-app.use("/", productsRouter);
-app.use("/", wishlistsRouter);
-app.use("/", cartsRouter);
-app.use("/", addressRouter);
+app.use("/product", productsRouter);
+app.use("/wishlist", wishlistsRouter);
+app.use("/cart", cartsRouter);
+app.use("/address", addressRouter);
 
 app.use("/user", usersRouter);
+app.use('/',express.static(path.join(__dirname, 'website')));
 
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'website', 'index.html'));
+});
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));

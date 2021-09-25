@@ -112,7 +112,7 @@ module.exports = {
       // colorlist
       let colors = await Product.find(search).select("color");
       colors = colors.reduce((unique, o) => {
-        if (!unique.some(obj => obj.color === o?.color)) {
+        if (!unique.some(obj => obj.color === o.color)) {
           unique.push(o.color);
         }
         return unique;

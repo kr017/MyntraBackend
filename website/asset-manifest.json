@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/static/css/main.ea1455b2.chunk.css",
+    "main.js": "/static/js/main.8c38fe58.chunk.js",
+    "main.js.map": "/static/js/main.8c38fe58.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.e020719d.js",
+    "runtime-main.js.map": "/static/js/runtime-main.e020719d.js.map",
+    "static/js/2.7b3b3395.chunk.js": "/static/js/2.7b3b3395.chunk.js",
+    "static/js/2.7b3b3395.chunk.js.map": "/static/js/2.7b3b3395.chunk.js.map",
+    "index.html": "/index.html",
+    "static/css/main.ea1455b2.chunk.css.map": "/static/css/main.ea1455b2.chunk.css.map",
+    "static/js/2.7b3b3395.chunk.js.LICENSE.txt": "/static/js/2.7b3b3395.chunk.js.LICENSE.txt",
+    "static/media/beauty_banner.72d9f551.jpg": "/static/media/beauty_banner.72d9f551.jpg",
+    "static/media/kids_banner.e9610d3d.jpg": "/static/media/kids_banner.e9610d3d.jpg",
+    "static/media/login_banner.ea33f304.png": "/static/media/login_banner.ea33f304.png",
+    "static/media/logo.d4b542df.jpg": "/static/media/logo.d4b542df.jpg",
+    "static/media/men_banner.c1d3fa73.jpg": "/static/media/men_banner.c1d3fa73.jpg",
+    "static/media/women_banner.23aa3f05.jpg": "/static/media/women_banner.23aa3f05.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e020719d.js",
+    "static/js/2.7b3b3395.chunk.js",
+    "static/css/main.ea1455b2.chunk.css",
+    "static/js/main.8c38fe58.chunk.js"
+  ]
+}
