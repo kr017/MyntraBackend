@@ -1,5 +1,9 @@
 const Cart = require("../models/cart");
 const User = require("../models/user");
+const Address = require("../models/address");
+const Product = require("../models/product");
+const Order = require("../models/order");
+
 const { v4: uuidv4 } = require("uuid");
 
 const stripe = require("stripe")(
@@ -10,29 +14,39 @@ module.exports = {
   placeOrder: async (req, res) => {
     try {
       let user = await User.findById(req.user._id);
+      let amount = 0,
+        addressId = "",
+        products = [],
+        productsInCart = [],
+        charge = null;
+      if (!req.body.amount || !req.body.addressId || !req.body.products) {
+        throw { message: "Please fill all required fields" };
+      }
+      amount = req.body.amount;
+      addressId = await Address.findById({ _id: req.body.addressId });
+      products = req.body.products;
+      for (let i = 0; i < products.length; i++) {
+        const product = await Product.findById({
+          _id: products[i]._id,
+        });
+
+        productsInCart.push(product);
+      }
       if (user.stripe_id) {
-        let charge = await stripe.charges.create(
+        charge = await stripe.charges.create(
           {
-            amount: parseInt(200) * 100,
+            amount: parseInt(amount) * 100,
             currency: "INR",
             customer: user.stripe_id,
             shipping: {
               name: user.name,
               address: {
-                country: req.body.card.country,
+                country: addressId.country,
               },
             },
           },
           { idempotencyKey: uuidv4() }
         );
-        console.log(charge);
-        if (charge) {
-          return res.json({
-            status: "success",
-          });
-        } else {
-          throw { message: "Something went wrong" };
-        }
       } else {
         const customer = await stripe.customers.create({
           email: user.email,
@@ -44,32 +58,46 @@ module.exports = {
             stripe_id: customer.id,
           });
 
-          let charge = await stripe.charges.create(
+          charge = await stripe.charges.create(
             {
-              amount: parseInt(200) * 100,
+              amount: parseInt(amount) * 100,
               currency: "INR",
               customer: customer.id,
               shipping: {
                 name: user.name,
                 address: {
-                  country: req.body.card.country,
+                  country: addressId.country,
                 },
               },
             },
             { idempotencyKey: uuidv4() }
           );
-          console.log(charge);
-          if (charge) {
-            return res.json({
-              status: "success",
-            });
-          } else {
-            throw { message: "Something went wrong" };
-          }
         }
       }
+
+      if (charge) {
+        let data = {
+          userId: req.user._id,
+          payment: { amount: parseInt(amount), receiptUrl: charge.receipt_url },
+          products: productsInCart,
+          addressId: addressId,
+          status: "ACTIVE",
+        };
+        let order = new Order(data);
+        await order.save(data => {
+          res.json({
+            status: "success",
+            msg: "order created!!!",
+            data: order,
+          });
+        });
+      } else {
+        throw { message: "Something went wrong" };
+      }
     } catch (err) {
-      console.log(err);
+      res.status(400).json({
+        message: (err && err.message) || "Failed to place order",
+      });
     }
   },
 };

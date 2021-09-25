@@ -4,7 +4,14 @@ const Schema = mongoose.Schema;
 const orderSchema = new Schema(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User" },
-    payment: {},
+    payment: {
+      amount: {
+        type: Number,
+      },
+      receiptUrl: {
+        type: String,
+      },
+    },
     products: [
       {
         productId: { type: Schema.Types.ObjectId, ref: "Product" },
@@ -19,13 +26,16 @@ const orderSchema = new Schema(
     modifiedOn: {
       type: Date,
     },
+    status: {
+      type: String,
+    },
   },
   { collection: "order" }
 );
 
 orderSchema.pre("save", function (next) {
-  const note = this;
-  note.modifiedOn = moment().unix() * 1000;
+  const order = this;
+  order.modifiedOn = moment().unix() * 1000;
 
   next();
 });

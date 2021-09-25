@@ -8,6 +8,7 @@ const OrderController = require("../controller/order");
 router.all("/api/*", userAuthenticated, userExists);
 router.post("/api/addCart", CartController.addOrUpdateCart);
 router.get("/api/cart", CartController.getProductsFromCart);
+router.post("/api/removeCart", CartController.removeProductFromCart);
 
 router.post("/api/checkout", OrderController.placeOrder);
 
