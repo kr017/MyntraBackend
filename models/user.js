@@ -20,6 +20,9 @@ const userSchema = new Schema(
     created_at: {
       type: Date,
     },
+    stripe_id: {
+      type: String,
+    },
     last_modified: {
       type: Date,
     },

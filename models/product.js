@@ -26,6 +26,9 @@ const productSchema = new Schema(
     image: {
       type: Array,
     },
+    color: {
+      type: String,
+    },
   },
   { collection: "product" }
 );

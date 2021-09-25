@@ -11,38 +11,40 @@ module.exports = {
         sort.created_at = -1;
       }
       let search = {};
-      // search.isActive = 1;
-      // if (req.body.isArchieved || req.body.isArchieved === false) {
-      //   search.isArchieved = req.body.isArchieved;
-      // }
+
+      if (req.body.categories && req.body.categories.length > 0) {
+        search.category = { $in: [...req.body.categories] };
+      }
+      if (req.body.brands && req.body.brands.length > 0) {
+        search.brand = { $in: [...req.body.brands] };
+      }
+      if (req.body.colors && req.body.colors.length > 0) {
+        search.color = { $in: [...req.body.colors] };
+      }
+
+      if (req.body.search) {
+        let regex = new RegExp(req.body.search, "i");
+        search = {
+          // section: req.body.section,
+          $or: [
+            {
+              color: regex,
+            },
+            {
+              brand: regex,
+            },
+            {
+              category: regex,
+            },
+            { name: regex },
+          ],
+        };
+      }
+
       if (req.body.section) {
         search.section = req.body.section;
       }
-      if (req.body.category) {
-        search.category = req.body.category;
-      }
-      if (req.body.brand) {
-        search.brand = req.body.brand;
-      }
-      if (req.body.color) {
-        search.color = req.body.color;
-      }
-      // if (req.body.search) {
-      //   search = {
-      //     ...search,
-      //     $or: [
-      //       { color: { $regex: req.body.search, $options: "i" } },
-      //       { title: { $regex: req.body.search, $options: "i" } },
-      //       { description: { $regex: req.body.search, $options: "i" } },
-      //     ],
-      //   };
-      // }
-
-      // if (req.body.pin || req.body.pin === false) {
-      //   search.isPinned = req.body.pin;
-      // }
-
-      // let totalRecords = await Note.count();
+      console.log(search);
       let products = await Product.find(search)
         .collation({ locale: "en_US", strength: 1 }) //letter casing
         .sort(sort);
@@ -62,7 +64,7 @@ module.exports = {
     try {
       let productId = req.params.id;
       const product = await Product.findById({ _id: productId });
-      console.log(productId);
+
       if (product) {
         res.json({
           status: "success",
@@ -80,139 +82,56 @@ module.exports = {
     }
   },
 
-  /**
-   * get particular note details.
-   * @param {note_id} req
-   */
-  // getUserNote: async (req, res) => {
-  //   try {
-  //     if (!req.body.note_id) {
-  //       throw { message: "Note id is required." };
-  //     }
-  //     let userNote = await Note.findById(req.body.note_id);
+  getFiltersList: async (req, res) => {
+    try {
+      let search = {};
+      if (req.body.section) {
+        search.section = req.body.section;
+      }
 
-  //     res.json({
-  //       status: "success",
-  //       message: "User Note",
-  //       data: userNote,
-  //     });
-  //   } catch (err) {
-  //     res.status(400).json({
-  //       message: (err && err.message) || "Failed to find note",
-  //     });
-  //   }
-  // },
+      //categorieslist
+      let categories = await Product.find(search).select("category");
+      categories = categories.reduce((unique, o) => {
+        if (!unique.some(obj => obj.category === o.category)) {
+          unique.push(o.category);
+        }
+        return unique;
+      }, []);
+      categories = [...new Set(categories)];
 
-  // updateNote: async (req, res) => {
-  //   try {
-  //     if (!req.body._id) {
-  //       throw { message: "Note id is required." };
-  //     }
+      // brandlist
+      let brands = await Product.find(search).select("brand");
+      brands = brands.reduce((unique, o) => {
+        if (!unique.some(obj => obj.brand === o.brand)) {
+          unique.push(o.brand);
+        }
+        return unique;
+      }, []);
+      brands = [...new Set(brands)];
 
-  //     let userNote = await Note.findById(req.body._id);
+      // colorlist
+      let colors = await Product.find(search).select("color");
+      colors = colors.reduce((unique, o) => {
+        if (!unique.some(obj => obj.color === o?.color)) {
+          unique.push(o.color);
+        }
+        return unique;
+      }, []);
+      colors = [...new Set(colors)];
 
-  //     let updatedNote = await Note.findByIdAndUpdate(
-  //       req.body._id,
-  //       {
-  //         title: req.body.title ? req.body.title : userNote.title,
-  //         description: req.body.description
-  //           ? req.body.description
-  //           : userNote.description,
-  //         color: req.body.color ? req.body.color : userNote.color,
-  //         isPinned: req.body.isPinned ? true : false,
-  //         tag: req.body.tag ? req.body.tag : userNote.tag,
-  //         last_modified: moment().unix() * 1000,
-  //       },
-  //       { new: true }
-  //     );
-
-  //     res.json({
-  //       status: "success",
-  //       message: "Note updated successfully",
-  //       data: updatedNote,
-  //     });
-  //   } catch (err) {
-  //     res.status(400).json({
-  //       message: (err && err.message) || "Note update failed",
-  //     });
-  //   }
-  // },
-
-  // archiveNote: async (req, res) => {
-  //   try {
-  //     if (!req.body.note_id) {
-  //       throw { message: "Note id is required." };
-  //     }
-
-  //     let archiveNote = await Note.findByIdAndUpdate(req.body.note_id, {
-  //       isArchieved: 1,
-  //     });
-  //     res.json({
-  //       status: "success",
-  //       message: "Note archieved successfully",
-  //     });
-  //   } catch (error) {
-  //     res.status(400).json({
-  //       message: (error && error.message) || "Note update failed",
-  //     });
-  //   }
-  // },
-
-  // deleteNote: async (req, res) => {
-  //   try {
-  //     if (!req.body.note_id) {
-  //       throw { message: "Note id is required." };
-  //     }
-
-  //     let deleteNote = await Note.findByIdAndUpdate(req.body.note_id, {
-  //       isActive: 0,
-  //     });
-  //     res.json({
-  //       status: "success",
-  //       message: "Note deleted successfully",
-  //     });
-  //   } catch (error) {
-  //     res.status(400).json({
-  //       message: (error && error.message) || "Note update failed",
-  //     });
-  //   }
-  // },
-
-  // getTrashNotes: async (req, res) => {
-  //   try {
-  //     let notes = await Note.find({ isActive: 0 });
-
-  //     res.json({
-  //       status: "success",
-  //       message: "deleted notes",
-  //       data: notes,
-  //     });
-  //   } catch (error) {
-  //     res.status(400).json({
-  //       message: (error && error.message) || "Note update failed",
-  //     });
-  //   }
-  // },
-
-  // restoreNote: async (req, res) => {
-  //   try {
-  //     let notes = await Note.findByIdAndUpdate(
-  //       req.body.note_id,
-  //       { isActive: 1 },
-  //       {
-  //         new: true,
-  //       }
-  //     );
-
-  //     res.json({
-  //       status: "success",
-  //       message: "deleted notes",
-  //       data: notes,
-  //     });
-  //   } catch (error) {
-  //     res.status(400).json({
-  //       message: (error && error.message) || "Note update failed",
-  //     });
-  //   }
-  // },
+      res.json({
+        status: "success",
+        message: "all products",
+        data: {
+          brands: brands,
+          categories: categories,
+          colors: colors,
+        },
+      });
+    } catch (err) {
+      res.status(400).json({
+        message: (err && err.message) || "Failed to get products",
+      });
+    }
+  },
 };

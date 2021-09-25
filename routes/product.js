@@ -16,5 +16,6 @@ const ProductController = require("../controller/product");
 
 router.post("/shop", ProductController.getAllProducts);
 router.get("/shop/:id", ProductController.getProductDetails);
+router.post("/filters", ProductController.getFiltersList);
 
 module.exports = router;
