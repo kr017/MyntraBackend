@@ -11,6 +11,9 @@ const orderSchema = new Schema(
       receiptUrl: {
         type: String,
       },
+      id: {
+        type: String,
+      },
     },
     products: [
       {

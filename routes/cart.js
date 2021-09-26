@@ -11,5 +11,6 @@ router.get("/api/cart", CartController.getProductsFromCart);
 router.post("/api/removeCart", CartController.removeProductFromCart);
 
 router.post("/api/checkout", OrderController.placeOrder);
+router.get("/api/orders", OrderController.getOrders);
 
 module.exports = router;

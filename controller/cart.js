@@ -69,9 +69,8 @@ module.exports = {
 
       if (cart) {
         let products = cart.products;
-        console.log(products);
+
         let index = products.findIndex(item => item._id === productId);
-        console.log(products);
 
         products.splice(index, 1);
 
@@ -105,7 +104,7 @@ module.exports = {
     try {
       let userId = req.user._id;
       let cart = await Cart.findOne({ userId });
-      console.log(cart);
+
       if (cart) {
         let products = cart.products;
         let productsInCart = [];
