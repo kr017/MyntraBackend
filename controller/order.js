@@ -32,16 +32,18 @@ module.exports = {
         productsInCart.push(product);
       }
 
+      // productsInCart=cart.findOne({ userId: req.user._id }).populate('productId');
       if (user.stripe_id) {
+        console.log(user.stripe_id, req.body.token.card.country, user.name);
         charge = await stripe.charges.create(
           {
-            amount: parseInt(amount) * 100,
+            amount: parseInt(amount),
             currency: "INR",
             customer: user.stripe_id,
             shipping: {
               name: user.name,
               address: {
-                country: addressId.country,
+                country: req.body.token.card.country,
               },
             },
           },
@@ -50,9 +52,9 @@ module.exports = {
       } else {
         const customer = await stripe.customers.create({
           email: user.email,
-          source: req.body.id,
+          source: req.body.token.id,
         });
-
+        console.log(customer);
         if (customer) {
           let updatedUser = await User.findByIdAndUpdate(req.user._id, {
             stripe_id: customer.id,
@@ -66,7 +68,7 @@ module.exports = {
               shipping: {
                 name: user.name,
                 address: {
-                  country: addressId.country,
+                  country: req.body.token.card.country,
                 },
               },
             },
