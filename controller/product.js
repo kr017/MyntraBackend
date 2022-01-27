@@ -44,7 +44,6 @@ module.exports = {
       if (req.body.section) {
         search.section = req.body.section;
       }
-      console.log(search);
       let products = await Product.find(search)
         .collation({ locale: "en_US", strength: 1 }) //letter casing
         .sort(sort);

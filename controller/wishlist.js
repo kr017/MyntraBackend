@@ -22,7 +22,7 @@ module.exports = {
           { userId: userId, products: products },
           { new: true }
         );
-        // console.log("old");
+
         res.json({
           status: "success",
           message: "wishlist updated successfully",
@@ -45,7 +45,6 @@ module.exports = {
             data: products,
           });
         });
-        // console.log("new");
       }
     } catch (err) {
       res.status(400).json({

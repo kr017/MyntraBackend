@@ -4,6 +4,8 @@ module.exports = {
   port: process.env.PORT,
   connectionString: process.env.DB_CONNECTION,
   secret: process.env.SECRET,
+  rzp_secret: process.env.RZP_SECRET,
+  rzp_key: process.env.RZP_KEY,
 };
 
 // CLOUD=cloudinary.config({

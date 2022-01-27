@@ -13,4 +13,7 @@ router.post("/api/removeCart", CartController.removeProductFromCart);
 router.post("/api/checkout", OrderController.placeOrder);
 router.get("/api/orders", OrderController.getOrders);
 
+router.post("/api/rzpOrder", OrderController.rzpPlaceOrder);
+router.post("/api/rzpPayment", OrderController.rzpPayment);
+
 module.exports = router;
